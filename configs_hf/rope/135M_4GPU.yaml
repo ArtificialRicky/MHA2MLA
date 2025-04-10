@@ -10,16 +10,34 @@ overwrite_output_dir: true
 logging_strategy: steps
 logging_steps: 100
 resume_from_checkpoint: null
-per_device_train_batch_size: 4
+per_device_train_batch_size: 4 # 1
 remove_unused_columns: False
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 4 # 16
 bf16: true
 deepspeed: ../configs_hf/rope/ds_config.json
+'''
+{
+  "zero_optimization": {
+    "stage": 2,
+    "offload_optimizer": {
+      "device": "cpu",
+      "pin_memory": true
+    },
+    "offload_param": {
+      "device": "cpu",
+      "pin_memory": true
+    }
+  },
+  "fp16": {
+    "enabled": true
+  }
+}
+'''
 dataloader_drop_last: true
 # optim
 optim: adamw_torch
 max_grad_norm: 1.0
-learning_rate: 1.0e-4
+learning_rate: 1.0e-4 # 5.0e-5
 adam_beta1: 0.9
 adam_beta2: 0.95
 adam_epsilon: 1.0e-8
@@ -46,4 +64,4 @@ dataset_weights: # 各数据集的权重
   - 0.08
   - 0.06
   - 0.01
-sequence_length: 2048
+sequence_length: 2048 # 1024
